@@ -4,8 +4,17 @@ import scipy.stats
 import scipy.interpolate
 # from sklearn.neighbors import KernelDensity
 
+# Define path to data
+# Taken from gp code by D. Foreman-Mackey
+d = os.path.dirname
+path_to_data = os.path.join(d(d(os.path.abspath(__file__))), "data")
+
 # Load data
-path_to_datafiles = '/Users/rodrigo/CHEOPS/spotlc'
+#path_to_datafiles = '/Users/rodrigo/CHEOPS/spotlc'
+
+def load_data(fn):
+    return np.loadtxt(os.path.join(path_to_data, fn), unpack=True,
+                      skiprows=1)
 
 class ParameterSampler(object):
     def __init__(self):
@@ -18,11 +27,14 @@ class ParameterSampler(object):
 
         self.data = {}
         for rotper in ('10', '20'):
+            """
             decaytime_day, teff, amplitude_mag = np.loadtxt(os.path.join(
                 path_to_datafiles, '{}d_data.dat'.format(rotper)),
                                                             skiprows=1,
                                                             unpack=True)
-
+            """
+            decaytime_day, teff, amplitude_mag = load_data('{}d_data.dat'.format(rotper))
+            
             indexes = np.searchsorted(sptype_bins, teff)
 
             for i, sp in enumerate(['M', 'K', 'G', 'F']):
@@ -109,15 +121,11 @@ def kde_sklearn(x, bandwidth=0.2, **kwargs):
     # log_pdf = kde_skl.score_samples(x_grid[:, np.newaxis])
     #return np.exp(log_pdf)
 
-
-def draw_parameters(prot, sptype, method='pick'):
-    if method=='pick':
-        return picksampler.draw(prot, sptype)
-    elif method=='kde':
-        return kdesampler.draw(prot, sptype)
+def draw_parameters(parametersampler, prot, sptype):
+    return parametersampler.draw(prot, sptype)
     
 def spot_lc(prot, sptype, ttotal=48, dt=1., ncurves=1, maxpoints=2000,
-            forcedt=False, save=True, outtemplate='lc'):
+            forcedt=False, save=True, outtemplate='lc', drawmethod='pick'):
     """
     Function that produces the spot light curve.
 
@@ -127,8 +135,9 @@ def spot_lc(prot, sptype, ttotal=48, dt=1., ncurves=1, maxpoints=2000,
     :param float ttotal: total run duration in days.
     :param float dt: time sampling in minutes.
     :param int maxnpoints: maximum number of points admitted.
+    :param str drawmethod: method to draw from sample of measured stars.
     """
-
+    
     # Prepare time array (sample at most 100 times per period)
     if not forcedt:
         timesample_minutes = float(np.max((dt, prot*24*0.6)))
@@ -153,8 +162,15 @@ def spot_lc(prot, sptype, ttotal=48, dt=1., ncurves=1, maxpoints=2000,
     structure = np.random.random() * 0.5 + 0.5
 
     # some function of Spectral type has to be implemented
-    amplitude_mag, decaytime_days = draw_parameters(prot, sptype,
-                                                    method='pick')
+    if drawmethod == 'pick':
+        paramsampler = PickSampler()
+    elif drawmethod == 'kde':
+        raise NotImplementedError('Sampling using KDE is not implemented.')
+        #paramsampler = KdeSampler()
+        
+    amplitude_mag, decaytime_days = draw_parameters(paramsampler,
+                                                    prot, sptype)
+                                                    
     # Convert amplitude in mag to amplitude in relative flux
     amplitude_relflux = 1 - 10**(-0.4*amplitude_mag)
 
@@ -195,6 +211,3 @@ def spot_lc(prot, sptype, ttotal=48, dt=1., ncurves=1, maxpoints=2000,
             fout.close()
         
     return time, flux
-
-picksampler = PickSampler()
-#kdesampler = KdeSampler()
