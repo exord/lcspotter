@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# spotter documentation build configuration file, created by
+# lcspotter documentation build configuration file, created by
 # sphinx-quickstart on Tue May 31 07:30:31 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'spotter'
+project = u'lcspotter'
 copyright = u'2016, Rodrigo F. Díaz'
 author = u'Rodrigo F. Díaz'
 
@@ -203,7 +203,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'spotterdoc'
+htmlhelp_basename = 'lcspotterdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -225,7 +225,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'spotter.tex', u'spotter Documentation',
+    (master_doc, 'lcspotter.tex', u'lcspotter Documentation',
      u'Rodrigo F. Díaz', 'manual'),
 ]
 
@@ -255,7 +255,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'spotter', u'spotter Documentation',
+    (master_doc, 'lcspotter', u'lcspotter Documentation',
      [author], 1)
 ]
 
@@ -269,8 +269,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'spotter', u'spotter Documentation',
-     author, 'spotter', 'One line description of project.',
+    (master_doc, 'lcspotter', u'lcspotter Documentation',
+     author, 'lcspotter', 'One line description of project.',
      'Miscellaneous'),
 ]
 
